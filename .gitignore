@@ -1,0 +1,16 @@
+# Downloaded and derived data. Everything here is reproducible by
+# `uruguay-settlements estimate`, and the Overture extract alone is far past
+# what belongs in git.
+data/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Local tooling state
+.serena/
+.code-review-graph/

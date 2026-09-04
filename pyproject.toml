@@ -1,0 +1,59 @@
+[project]
+name = "uruguay-settlements"
+version = "0.1.0"
+description = "Population estimates for Uruguay's informal settlements from Overture building footprints and the national RNAI register"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Nissim Lebovits", email = "nlebovits@pm.me" }]
+keywords = ["uruguay", "informal-settlements", "overture", "geoparquet", "duckdb"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: GIS",
+]
+
+dependencies = [
+    "duckdb>=1.1.0",
+    "geoparquet-io>=1.3.0",
+    "pandas>=2.2.0",
+    "pyarrow>=16.0.0",
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.5.0",
+]
+
+[project.scripts]
+uruguay-settlements = "uruguay_settlements.cli:main"
+
+[project.urls]
+Repository = "https://github.com/nlebovits/uruguay-settlements"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uruguay_settlements"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM", "PTH", "PL", "RUF"]
+ignore = ["E501", "PLR0913", "PLR2004", "PLR0915"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["uruguay_settlements"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers"]
