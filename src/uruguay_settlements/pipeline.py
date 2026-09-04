@@ -26,7 +26,7 @@ from uruguay_settlements.download import active_oai_rows, parse_count
 # No size filter, because Overture already under-detects here and discarding
 # small footprints would compound that. 0.90 residential share and 3.4 persons
 # per dwelling are the middle of each sweep axis.
-CENTRAL_SIZE_FILTER: int | None = None
+CENTRAL_SIZE_FILTER_LABEL = "No filter"
 CENTRAL_RESIDENTIAL_SHARE = 0.90
 CENTRAL_PERSONS_PER_DWELLING = 3.4
 
@@ -59,8 +59,10 @@ def _geometry_expr(con: duckdb.DuckDBPyConnection, path: Path, alias: str) -> st
     versions.
     """
     schema = con.execute(f"DESCRIBE SELECT geometry FROM '{path}' LIMIT 0").fetchall()
+    # DuckDB reports a CRS-carrying geometry as GEOMETRY('OGC:CRS84'), so match
+    # the prefix rather than the whole type name.
     column_type = schema[0][1].upper()
-    if column_type == "GEOMETRY":
+    if column_type.startswith("GEOMETRY"):
         return f"{alias}.geometry"
     return f"ST_GeomFromWKB({alias}.geometry)"
 
@@ -222,17 +224,27 @@ def montevideo_validation(
     sources, so treating it as ground truth would be partly circular.
     """
     active = active_oai_rows(oai_rows)
+    coded = [r for r in active if parse_count(r["id asentamiento"]) is not None]
+    if len(coded) != len(active):
+        print(f"    note: {len(active) - len(coded)} OAI rows carry no settlement code")
     oai = pd.DataFrame(
         {
-            "codigo_ai": [int(r["id asentamiento"]) for r in active],
-            "oai_viviendas": [parse_count(r["viviendas"]) for r in active],
-            "oai_personas": [parse_count(r["personas"]) for r in active],
+            "codigo_ai": [parse_count(r["id asentamiento"]) for r in coded],
+            "oai_viviendas": [parse_count(r["viviendas"]) for r in coded],
+            "oai_personas": [parse_count(r["personas"]) for r in coded],
         }
     )
 
     montevideo = counts[counts["nombre_dep"] == "Montevideo"]
     merged = montevideo.merge(oai, on="codigo_ai", how="inner")
     merged = merged[merged["oai_viviendas"].notna() & (merged["oai_viviendas"] > 0)]
+    if merged.empty:
+        raise RuntimeError(
+            "No Montevideo settlement joined between the RNAI and the Observatorio. "
+            "Both registers are supposed to share the INE-PIAI 2006 settlement code, "
+            "so an empty join means that assumption no longer holds."
+        )
+
     merged["ratio"] = merged["footprints"] / merged["oai_viviendas"]
     merged["abs_error"] = (merged["footprints"] - merged["oai_viviendas"]).abs()
 
@@ -287,9 +299,9 @@ def build_settlement_table(
     con.execute(
         """
         CREATE OR REPLACE TABLE settlement_estimates AS
-        SELECT e.* EXCLUDE (codigo_ai), e.codigo_ai, s.geom AS geometry
+        SELECT e.*, s.geom AS geometry
         FROM settlement_estimates_df e
-        JOIN settlements s USING (codigo_ai)
+        JOIN settlements s ON s.codigo_ai = e.codigo_ai
         ORDER BY e.nombre_dep, e.nombre_ai
         """
     )

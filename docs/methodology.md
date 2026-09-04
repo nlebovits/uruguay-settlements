@@ -104,6 +104,10 @@ census omission that fell hardest on low-income households. Agreement or disagre
 household can spread across several structures. The residential share knob gestures at this
 and does not solve it.
 
+**One footprint can be counted twice.** A building inside two overlapping settlement
+polygons joins to both. Exactly one of the 667 polygons overlaps another, so the effect
+is negligible here, but the join does not deduplicate.
+
 **Boundaries are approximate.** The RNAI service describes its polygons as "límites
 aproximados." A footprint just outside a boundary is not counted and one just inside is,
 and neither error is measured here.

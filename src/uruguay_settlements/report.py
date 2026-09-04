@@ -19,6 +19,7 @@ from uruguay_settlements.config import (
 from uruguay_settlements.pipeline import (
     CENTRAL_PERSONS_PER_DWELLING,
     CENTRAL_RESIDENTIAL_SHARE,
+    CENTRAL_SIZE_FILTER_LABEL,
 )
 
 
@@ -72,7 +73,7 @@ def write_summary(
     central = sweep[
         (sweep["residential_share"] == CENTRAL_RESIDENTIAL_SHARE)
         & (sweep["persons_per_dwelling"] == CENTRAL_PERSONS_PER_DWELLING)
-        & (sweep["size_filter"] == "No filter")
+        & (sweep["size_filter"] == CENTRAL_SIZE_FILTER_LABEL)
     ].iloc[0]
 
     lines: list[str] = []
@@ -139,6 +140,21 @@ def write_summary(
         f"{int(sweep['est_population'].max()):,} people "
         f"({sweep['ratio_to_ine'].min():.2f}x to {sweep['ratio_to_ine'].max():.2f}x INE).\n\n"
     )
+
+    inert = [
+        label
+        for label, footprints in sweep.groupby("size_filter")["footprints"].first().items()
+        if label != CENTRAL_SIZE_FILTER_LABEL
+        and footprints
+        == sweep[sweep["size_filter"] == CENTRAL_SIZE_FILTER_LABEL]["footprints"].iloc[0]
+    ]
+    if inert:
+        add(
+            f"The {' and '.join(inert)} filter removes nothing: the smallest Overture "
+            f"footprint inside any settlement is already above that cutoff. Overture "
+            f"does not carry the sub-6 m2 structures a size filter is meant to catch, "
+            f"which is one reason it under-detects here.\n\n"
+        )
 
     # -------------------------------------------------------- definition check
     add("## Detection check against the definition\n\n")

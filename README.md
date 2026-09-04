@@ -19,10 +19,10 @@ uv sync
 uv run uruguay-settlements estimate
 ```
 
-The first run downloads a Uruguay-sized slice of the Overture buildings layer. That
-step reads the parquet footer of every part file in the global release before it can
-prune, so expect tens of minutes. Everything after that is cached and the pipeline
-re-runs in under a minute.
+The first run cuts a Uruguay-sized slice out of the Overture buildings layer. That step
+reads the parquet footer of every part file in the global release before bbox pruning can
+help, so it takes about six minutes and pulls down 6,237,966 buildings. Everything after
+that is cached and the pipeline re-runs in six seconds.
 
 Outputs land in `results/`:
 
@@ -31,6 +31,39 @@ Outputs land in `results/`:
 | `settlement_analysis_summary.md` | The report: sensitivity sweep, departamento breakdown, validation |
 | `settlement_estimates.geojson` | Per-settlement footprint counts and estimates |
 | `montevideo_validation.csv` | Footprints against the Montevideo Observatorio's own counts |
+
+## Results
+
+Overture finds **82,392 footprints** inside the 667 registered settlements. At 90%
+residential share and 3.4 persons per dwelling, that is **252,120 people**, 7.20% of
+Uruguay's population and **1.30x** INE's figure of 193,260. Across the full sweep the
+estimate runs from 197,671 to 292,492 people, or 1.02x to 1.51x INE.
+
+Footprint counting overshoots, and three things explain most of the gap.
+
+**The two counts measure different things.** A footprint is a structure. INE counts
+people in households. Between them sit sheds, outbuildings, shops, and churches, and the
+residential-share axis is a guess at how many. Even the most aggressive setting, 85%,
+still lands above INE.
+
+**Overture agrees with Montevideo's own register on shape, not on level.** Across the
+338 settlements that join, footprint counts correlate with the Observatorio's dwelling
+counts at **0.981**, but the median settlement has 1.11 footprints per dwelling. The
+method ranks settlements well and overcounts them consistently.
+
+**The benchmark is not fixed.** INE's own number moved from 158,727 to 193,260 in May
+2026 after reweighting for a 10.3% census omission that fell hardest on low-income
+households. Against the pre-revision figure the footprint estimate would have looked 59%
+too high. Against the revised one it is 30% high. Nothing about the imagery changed.
+
+Overture also undercounts in the other direction. Thirty of the 667 settlements hold
+fewer than 10 footprints, which the INE-PIAI definition says is impossible, and one holds
+none at all. Twenty of the thirty are in Montevideo, where settlements are densest and
+structures smallest. The smallest footprint Overture places inside any settlement is
+6.31 m², so the layer simply does not carry the small structures these places are built
+from.
+
+Full tables in [`results/settlement_analysis_summary.md`](results/settlement_analysis_summary.md).
 
 ## Method
 
