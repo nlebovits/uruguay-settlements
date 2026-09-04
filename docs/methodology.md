@@ -55,6 +55,12 @@ exists so the reader can see how much the answer depends on a number nobody has 
 None, 6 m², and 10 m². Carried over from the Argentine analysis as generic noise filters.
 They are not country-specific parameters and nothing here treats them as such.
 
+On this data the 6 m² filter is inert. The smallest Overture footprint inside any
+settlement is 6.31 m², so that filter and no filter return the same 82,392 footprints, and
+the 36-row sweep holds 24 distinct results. The 10 m² filter removes 4,874 footprints, or
+5.9%. The report flags the degenerate filter rather than leaving two identical blocks of
+rows unexplained.
+
 ### Central scenario
 
 No size filter, 0.90 residential share, 3.4 persons per dwelling. The headline number and
@@ -111,6 +117,12 @@ is negligible here, but the join does not deduplicate.
 **Boundaries are approximate.** The RNAI service describes its polygons as "límites
 aproximados." A footprint just outside a boundary is not counted and one just inside is,
 and neither error is measured here.
+
+**The attribute columns are empty.** Overture publishes `height`, `num_floors`, and
+`subtype`, and inside Uruguayan settlements all three are effectively absent: 0, 17, and
+101 of 82,392 footprints respectively. That rules out a vertical-density analysis and
+prevents the residential share from being measured instead of assumed. `attribute_coverage`
+in `pipeline.py` computes these figures on every run.
 
 **Overture is a mosaic.** Its coverage in informal settlements comes from a mix of
 contributors and machine extraction, and it varies by place and by date. The definition

@@ -19,6 +19,7 @@ from uruguay_settlements.download import (
     summarise_oai,
 )
 from uruguay_settlements.pipeline import (
+    attribute_coverage,
     build_settlement_table,
     by_departamento,
     count_by_settlement,
@@ -82,6 +83,7 @@ def estimate() -> None:
         definition = definition_check(unfiltered)
         departamentos = by_departamento(unfiltered)
         validation, validation_summary = montevideo_validation(unfiltered, oai_rows)
+        coverage = attribute_coverage(con)
 
         print(
             f"    {definition['n_below_definition']} of {definition['n_settlements']} "
@@ -103,6 +105,7 @@ def estimate() -> None:
             definition=definition,
             validation_summary=validation_summary,
             oai_summary=oai_summary,
+            coverage=coverage,
             settlement_count=settlement_count,
         )
         con.close()

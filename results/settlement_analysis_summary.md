@@ -1,6 +1,6 @@
 # Uruguay informal settlement population estimates
 
-Generated 2026-09-04 17:43 UTC from Overture Maps release 2026-08-19.0 and the RNAI 2024 register.
+Generated 2026-09-04 18:38 UTC from Overture Maps release 2026-08-19.0 and the RNAI 2024 register.
 
 ## Headline
 
@@ -72,13 +72,13 @@ Worst detected:
 | Fray Manuel De Ubeda | Montevideo | 0 |
 | Montecaseros | Montevideo | 3 |
 | El Callejon | Montevideo | 3 |
-| Pasaje Bolivar | Montevideo | 4 |
 | Paullier Y Machado | Montevideo | 4 |
-| Albion | Montevideo | 5 |
-| San Petersburgo | Montevideo | 5 |
-| Avellaneda Y Pernas | Montevideo | 5 |
-| La Cantera | Canelones | 5 |
+| Pasaje Bolivar | Montevideo | 4 |
 | Villademoros | Montevideo | 5 |
+| Avellaneda Y Pernas | Montevideo | 5 |
+| San Petersburgo | Montevideo | 5 |
+| Albion | Montevideo | 5 |
+| La Cantera | Canelones | 5 |
 
 ## Montevideo validation
 
@@ -126,6 +126,18 @@ Central scenario: no size filter, 90% residential share, 3.4 persons per dwellin
 | Treinta y Tres | 2 | 124 | 112 | 381 | 0 |
 | Florida | 3 | 78 | 70 | 238 | 1 |
 | Durazno | 1 | 27 | 24 | 82 | 0 |
+
+## What Overture does not carry here
+
+Two analyses that the Argentine work could run are impossible on this data, and the reason is measurable rather than arguable.
+
+| Attribute | All Uruguay | Inside settlements |
+|---|---|---|
+| height | 3,004 (0.05%) | 0 (0.00%) |
+| num_floors | 24,224 (0.39%) | 17 (0.02%) |
+| subtype | 53,603 (0.86%) | 101 (0.12%) |
+
+No building inside a Uruguayan settlement carries a height, so there is no vertical-density analysis to run. `subtype` is almost entirely absent too, which is why the residential share stays a declared assumption: Overture cannot say which of these footprints are dwellings.
 
 ## Parameters
 

@@ -53,8 +53,19 @@ intersect IGN Planta Urbana polygons. RNAI settlements sit in 91 census localiti
 urban by construction, so the split would separate nothing.
 
 **Dropped: vertical density.** That analysis needed the RENABAP household count to compare
-against. Overture carries `num_floors`, but it is too sparsely populated to substitute, and
-Uruguayan asentamientos are overwhelmingly single-storey.
+against. Overture's own height fields cannot stand in, and the shortfall is not marginal:
+
+| Attribute | All Uruguay | Inside settlements |
+|---|---|---|
+| `height` | 3,004 of 6,237,966 (0.05%) | 0 of 82,392 (0.00%) |
+| `num_floors` | 24,224 (0.39%) | 17 (0.02%) |
+| `subtype` | 53,603 (0.86%) | 101 (0.12%) |
+
+Not one building inside a Uruguayan settlement carries a height. The 17 with a floor count
+are too few to say anything. `subtype` fails the same way, which is why the residential
+share stays a declared assumption rather than a measurement: Overture cannot say which of
+these footprints are dwellings. The pipeline reports these figures rather than asserting
+them, so they update with each Overture release.
 
 **Added: the definition check.** Uruguay's settlement definition carries a numeric floor of
 10 dwellings, applied unchanged since 2006. Counting settlements where Overture finds fewer

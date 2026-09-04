@@ -107,6 +107,9 @@ def join_buildings_to_settlements(
         CREATE OR REPLACE TABLE settlement_buildings_raw AS
         SELECT
             s.codigo_ai,
+            b.height,
+            b.num_floors,
+            b.subtype,
             ST_Area(ST_Transform({building_geom}, 'EPSG:4326', '{PROJECTED_CRS}')) AS area_m2
         FROM settlements s
         JOIN '{buildings}' b
@@ -120,6 +123,51 @@ def join_buildings_to_settlements(
 
     matched = con.execute("SELECT count(*) FROM settlement_buildings_raw").fetchone()[0]
     print(f"    {matched:,} footprints fall inside a settlement")
+
+
+def attribute_coverage(
+    con: duckdb.DuckDBPyConnection, buildings: Path = BUILDINGS_PARQUET
+) -> pd.DataFrame:
+    """Measure how often Overture populates the attributes this analysis wanted.
+
+    Height and floor count would have supported a vertical-density comparison,
+    and subtype would have turned the residential share from a guess into a
+    measurement. Whether either is possible is a question about the data, so it
+    is answered with a query rather than an assumption.
+    """
+    national = con.execute(
+        f"""
+        SELECT
+            count(*) AS n,
+            count(height) AS height,
+            count(num_floors) AS num_floors,
+            count(subtype) AS subtype
+        FROM '{buildings}'
+        """
+    ).fetchone()
+    inside = con.execute(
+        """
+        SELECT
+            count(*) AS n,
+            count(height) AS height,
+            count(num_floors) AS num_floors,
+            count(subtype) AS subtype
+        FROM settlement_buildings_raw
+        """
+    ).fetchone()
+
+    rows = []
+    for index, field in enumerate(("height", "num_floors", "subtype"), start=1):
+        rows.append(
+            {
+                "attribute": field,
+                "national": national[index],
+                "national_pct": national[index] / national[0] * 100,
+                "in_settlements": inside[index],
+                "in_settlements_pct": inside[index] / inside[0] * 100,
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def count_by_settlement(con: duckdb.DuckDBPyConnection, min_area: int | None) -> pd.DataFrame:

@@ -56,6 +56,11 @@ method ranks settlements well and overcounts them consistently.
 households. Against the pre-revision figure the footprint estimate would have looked 59%
 too high. Against the revised one it is 30% high. Nothing about the imagery changed.
 
+Overture carries none of the attributes that would narrow any of this. Inside
+settlements, 0 of 82,392 footprints have a `height`, 17 have a `num_floors`, and 101 have
+a `subtype`. There is no vertical-density analysis to run, and no way to replace the
+residential-share guess with a measurement.
+
 Overture also undercounts in the other direction. Thirty of the 667 settlements hold
 fewer than 10 footprints, which the INE-PIAI definition says is impossible, and one holds
 none at all. Twenty of the thirty are in Montevideo, where settlements are densest and
@@ -75,7 +80,9 @@ estimated_population = estimated_dwellings x persons_per_dwelling
 ```
 
 The sweep runs 3 footprint size filters x 4 residential shares x 3 persons-per-dwelling
-values. Only the last of those has a Uruguayan citation behind every value:
+values, 36 rows. Two of the size filters return the same footprint count, so 24 of those
+rows are distinct. Only the persons-per-dwelling axis has a Uruguayan citation behind
+every value:
 
 | Persons per dwelling | Source |
 |---|---|

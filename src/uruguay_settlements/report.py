@@ -66,6 +66,7 @@ def write_summary(
     definition: dict[str, Any],
     validation_summary: dict[str, Any],
     oai_summary: dict[str, Any],
+    coverage: pd.DataFrame,
     settlement_count: int,
 ) -> None:
     """Write the markdown report."""
@@ -260,6 +261,32 @@ def write_summary(
                 for _, r in departamentos.iterrows()
             ],
         )
+    )
+
+    # ------------------------------------------------------ attribute coverage
+    add("## What Overture does not carry here\n\n")
+    add(
+        "Two analyses that the Argentine work could run are impossible on this data, "
+        "and the reason is measurable rather than arguable.\n\n"
+    )
+    add(
+        _table(
+            ["Attribute", "All Uruguay", "Inside settlements"],
+            [
+                [
+                    str(row["attribute"]),
+                    f"{int(row['national']):,} ({row['national_pct']:.2f}%)",
+                    f"{int(row['in_settlements']):,} ({row['in_settlements_pct']:.2f}%)",
+                ]
+                for _, row in coverage.iterrows()
+            ],
+        )
+    )
+    add(
+        "No building inside a Uruguayan settlement carries a height, so there is no "
+        "vertical-density analysis to run. `subtype` is almost entirely absent too, "
+        "which is why the residential share stays a declared assumption: Overture "
+        "cannot say which of these footprints are dwellings.\n\n"
     )
 
     # ------------------------------------------------------------- parameters
