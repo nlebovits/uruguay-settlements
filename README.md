@@ -1,18 +1,39 @@
-# Uruguay informal settlement population estimates
+# Informal settlement population from building footprints
 
-How many people live in Uruguay's asentamientos irregulares? This estimates it from
-building footprints, by counting Overture Maps buildings inside the 667 settlement
-polygons of the national register and converting footprints to people with published
-Uruguayan ratios.
+How many people live in an informal settlement register, according to evidence that did
+not come from the register? This repository answers that question twice: once as a
+reusable method, and once as a finished analysis of Uruguay.
 
-The estimate is deliberately independent of any official population count. Uruguay
-already has one: INE put 193,260 people in asentamientos when it reweighted the Censo
-2023 microdata in May 2026. Running a footprint count against that number tests whether
-open building data can measure informal settlement population in a country that has
-already measured it, which is the only way to know whether the method is worth applying
-where no such measurement exists.
+The method is the point. Uruguay is the demonstration that it runs.
 
-## Running it
+## The skill
+
+[`.claude/skills/replicate-settlement-analysis/SKILL.md`](.claude/skills/replicate-settlement-analysis/SKILL.md)
+takes an agent from an official settlement register to an auditable population estimate,
+anywhere the register exists. It walks eight phases: build an evidence matrix from
+national sources, choose a design the local data can support, measure the building layer
+instead of trusting it, join footprints to polygons, sweep every uncertain parameter,
+interpret the gap against the official benchmark, verify, and write the research package.
+
+Its governing rule is that a previous country's analysis tells you **which quantities to
+investigate**, never what their values are. Persons per dwelling, residential share,
+families per dwelling, and size thresholds are all local evidence. Carrying one across a
+border makes the estimate a restatement of the source country.
+
+The skill also refuses to make a discrepancy disappear. If the footprint count disagrees
+with the official figure, that is a result. If the building layer is too thin to convert
+structures into people, the correct output is a report saying so, not a population
+number.
+
+Point Claude Code at a country with a settlement register and invoke the skill. It
+handles the research, the pipeline, and the documentation.
+
+## The worked example: Uruguay
+
+Uruguay is a hard test on purpose. INE already published an official asentamientos
+population, 193,260 people, when it reweighted the Censo 2023 microdata in May 2026.
+Running a footprint estimate against a country that has already measured itself is the
+only way to learn whether the method is worth applying where nobody has.
 
 ```bash
 uv sync
@@ -32,7 +53,7 @@ Outputs land in `results/`:
 | `settlement_estimates.geojson` | Per-settlement footprint counts and estimates |
 | `montevideo_validation.csv` | Footprints against the Montevideo Observatorio's own counts |
 
-## Results
+### Results
 
 Overture finds **82,392 footprints** inside the 667 registered settlements. At 90%
 residential share and 3.4 persons per dwelling, that is **252,120 people**, 7.20% of
@@ -65,12 +86,12 @@ Overture also undercounts in the other direction. Thirty of the 667 settlements 
 fewer than 10 footprints, which the INE-PIAI definition says is impossible, and one holds
 none at all. Twenty of the thirty are in Montevideo, where settlements are densest and
 structures smallest. The smallest footprint Overture places inside any settlement is
-6.31 m², so the layer simply does not carry the small structures these places are built
+6.31 m², so the layer does not carry the small structures these places are built
 from.
 
 Full tables in [`results/settlement_analysis_summary.md`](results/settlement_analysis_summary.md).
 
-## Method
+### Method
 
 For each settlement, count the Overture footprints that intersect it, then:
 
@@ -93,7 +114,7 @@ every value:
 `docs/methodology.md` explains each parameter and what it can and cannot support.
 `docs/sources.md` lists every source with its URL and the exact figure taken from it.
 
-## Two checks the data makes possible
+### Two checks the data makes possible
 
 **The definition test.** INE-PIAI defines an asentamiento as a grouping of more than 10
 dwellings, so every settlement in the register has at least 10. Any settlement where
@@ -107,13 +128,41 @@ method agrees and where it breaks down. Those counts never feed the national est
 because the Observatorio's own field sheet lists satellite building counting among its
 sources, and calibrating on a partly footprint-derived reference would be circular.
 
+## What Uruguay teaches about the next country
+
+Two decisions here show why the skill insists on local evidence.
+
+Uruguay's RNAI register has no household field. Its whole schema is `OBJECTID`,
+`Codigo_AI`, `Nombre_AI`, `Nombre_dep`, `Codigo_dep`, `Nombre_loc`, `Codigo_loc`,
+`Fecha_desd`, `GlobalID`. The Argentina analysis this replicates took
+`max(footprint_estimate, official_families)` per settlement. With no second term, that
+formula does not exist in Uruguay, and the design became footprints-forward. A missing
+column changed the research design, not one parameter.
+
+The Montevideo Observatorio would have been the obvious calibration target. Its field
+sheet lists satellite building counting among its methods, so tuning the footprint
+estimate against it would have measured Overture against imagery. It validates instead.
+
+Every Argentine constant was dropped. `docs/differences-from-argentina.md` records what
+carried over and what did not, which is the audit trail the skill asks every replication
+to leave behind.
+
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `.claude/skills/replicate-settlement-analysis/` | The portable method |
+| `src/uruguay_settlements/` | The Uruguay pipeline: download, optimize, join, sweep, report |
+| `docs/` | Methodology, sources, and what changed from Argentina |
+| `results/` | Committed outputs, regenerated by the pipeline |
+| `tests/` | Arithmetic and parsing tests |
+
 ## Origin
 
-This replicates an [Argentina analysis](https://gist.github.com/nlebovits/fd3e5f9a0e5ea1eeb4c6313917fbbbbe)
-that joined VIDA footprints to the RENABAP register. Uruguay's register carries no
-household count, so the Argentine formula has no second term to compare against, and
-every Argentine constant has been replaced. `docs/differences-from-argentina.md` covers
-what changed.
+This started as a replication of an
+[Argentina analysis](https://gist.github.com/nlebovits/fd3e5f9a0e5ea1eeb4c6313917fbbbbe)
+that joined VIDA footprints to the RENABAP register. Doing the replication honestly
+produced the skill.
 
 ## Licence
 
