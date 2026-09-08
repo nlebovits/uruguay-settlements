@@ -1,8 +1,7 @@
 # Informal settlement population from building footprints
 
-How many people live in an informal settlement register, according to evidence that did
-not come from the register? This repository answers that question twice: once as a
-reusable method, and once as a finished analysis of Uruguay.
+Evidence outside the register supports two estimates of informal-settlement population.
+The first is a reusable method; the second is a finished analysis of Uruguay.
 
 The method is the point. Uruguay is the demonstration that it runs.
 
@@ -10,10 +9,11 @@ The method is the point. Uruguay is the demonstration that it runs.
 
 [`.claude/skills/replicate-settlement-analysis/SKILL.md`](.claude/skills/replicate-settlement-analysis/SKILL.md)
 takes an agent from an official settlement register to an auditable population estimate,
-anywhere the register exists. It walks eight phases: build an evidence matrix from
-national sources, choose a design the local data can support, measure the building layer
-instead of trusting it, join footprints to polygons, sweep every uncertain parameter,
-interpret the gap against the official benchmark, verify, and write the research package.
+anywhere the register exists. It starts by building an evidence matrix from national
+sources and choosing a design the local data can support. It then measures the building
+layer and joins footprints to polygons. A sensitivity sweep covers the uncertain
+parameters. The final phases interpret the gap against the official benchmark, verify the
+result, and write the research package.
 
 Its governing rule is that a previous country's analysis tells you **which quantities to
 investigate**, never what their values are. Persons per dwelling, residential share,
@@ -22,13 +22,13 @@ border makes the estimate a restatement of the source country.
 
 The skill also refuses to make a discrepancy disappear. If the footprint count disagrees
 with the official figure, that is a result. If the building layer is too thin to convert
-structures into people, the correct output is a report saying so, not a population
-number.
+structures into people, the correct output reports that limitation without estimating a
+population.
 
 Point Claude Code at a country with a settlement register and invoke the skill. It
 handles the research, the pipeline, and the documentation.
 
-## The worked example: Uruguay
+## Uruguay worked example
 
 Uruguay is a hard test on purpose. INE already published an official asentamientos
 population, 193,260 people, when it reweighted the Censo 2023 microdata in May 2026.
@@ -45,7 +45,7 @@ reads the parquet footer of every part file in the global release before bbox pr
 help, so it takes about six minutes and pulls down 6,237,966 buildings. Everything after
 that is cached and the pipeline re-runs in six seconds.
 
-Outputs land in `results/`:
+The command writes outputs to `results/`:
 
 | File | Contents |
 |---|---|
@@ -62,9 +62,10 @@ estimate runs from 197,671 to 292,492 people, or 1.02x to 1.51x INE.
 
 Footprint counting overshoots, and three things explain most of the gap.
 
-**The two counts measure different things.** A footprint is a structure. INE counts
-people in households. Between them sit sheds, outbuildings, shops, and churches, and the
-residential-share axis is a guess at how many. Even the most aggressive setting, 85%,
+**A footprint and a person count measure different things.** A footprint is a structure.
+INE counts people in households. Sheds, outbuildings, shops, and churches separate the
+two measures, and the residential-share axis is a guess at how many. Even the most
+aggressive setting, 85%,
 still lands above INE.
 
 **Overture agrees with Montevideo's own register on shape, not on level.** Across the
@@ -114,23 +115,23 @@ every value:
 `docs/methodology.md` explains each parameter and what it can and cannot support.
 `docs/sources.md` lists every source with its URL and the exact figure taken from it.
 
-### Two checks the data makes possible
+### Checks supported by the data
 
 **The definition test.** INE-PIAI defines an asentamiento as a grouping of more than 10
 dwellings, so every settlement in the register has at least 10. Any settlement where
-Overture finds fewer than 10 footprints is a detection failure, and counting them
-measures the floor on how much the footprint layer misses.
+fewer than 10 Overture footprints reveals a detection failure. Counting those cases
+measures the minimum number of settlements affected by missing footprints.
 
 **Montevideo.** The Observatorio de Asentamientos publishes dwelling and person counts
 for each of Montevideo's 345 active settlements, slightly over half the national total.
 Comparing footprint counts to those figures settlement by settlement shows where the
-method agrees and where it breaks down. Those counts never feed the national estimate,
+method agrees and where it breaks down. The national estimate excludes those counts
 because the Observatorio's own field sheet lists satellite building counting among its
-sources, and calibrating on a partly footprint-derived reference would be circular.
+sources; calibrating on a partly footprint-derived reference would be circular.
 
 ## What Uruguay teaches about the next country
 
-Two decisions here show why the skill insists on local evidence.
+Local evidence changed the research design and the choice of calibration data.
 
 Uruguay's RNAI register has no household field. Its whole schema is `OBJECTID`,
 `Codigo_AI`, `Nombre_AI`, `Nombre_dep`, `Codigo_dep`, `Nombre_loc`, `Codigo_loc`,
@@ -143,9 +144,9 @@ The Montevideo Observatorio would have been the obvious calibration target. Its 
 sheet lists satellite building counting among its methods, so tuning the footprint
 estimate against it would have measured Overture against imagery. It validates instead.
 
-Every Argentine constant was dropped. `docs/differences-from-argentina.md` records what
-carried over and what did not, which is the audit trail the skill asks every replication
-to leave behind.
+The analysis replaced all Argentine constants with Uruguayan evidence.
+`docs/differences-from-argentina.md` records what carried over and what changed, forming
+the audit trail the skill asks each replication to leave behind.
 
 ## Repository layout
 
@@ -156,6 +157,16 @@ to leave behind.
 | `docs/` | Methodology, sources, and what changed from Argentina |
 | `results/` | Committed outputs, regenerated by the pipeline |
 | `tests/` | Arithmetic and parsing tests |
+
+## Prose checks
+
+Vale and proselint check every Markdown document with the same configuration as
+`barrios-visibles-paper`. Install the development dependencies and run the hooks with:
+
+```bash
+uv sync --extra dev
+uv run --extra dev prek run --all-files
+```
 
 ## Origin
 

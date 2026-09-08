@@ -99,15 +99,15 @@ def write_summary(
         f"asentamientos, 5.5% of the population. The footprint estimate is "
         f"**{central['ratio_to_ine']:.2f}x** that figure. Before the May 2026 "
         f"reweighting, INE's own number was {INE_ASENTAMIENTOS_POPULATION_UNWEIGHTED:,}, "
-        "so the official count moved by 22% in a single revision.\n\n"
+        "so the official count moved by 22% in one revision.\n\n"
     )
 
     # ------------------------------------------------------------- sensitivity
     add("## Sensitivity\n\n")
     add(
-        "Three footprint size filters, four residential shares, three "
-        "persons-per-dwelling values. Only the last axis carries a Uruguayan "
-        "citation for every value; see `docs/methodology.md`.\n\n"
+        "The sweep covers three footprint size filters, four residential shares, and "
+        "three persons-per-dwelling values. Only the persons-per-dwelling values have "
+        "a Uruguayan citation for every value; see `docs/methodology.md`.\n\n"
     )
     add(
         _table(
@@ -162,8 +162,8 @@ def write_summary(
     add(
         "INE-PIAI defines an asentamiento as a grouping of more than 10 dwellings, so "
         "every settlement in the register has at least that many. Wherever Overture "
-        "finds fewer, the footprint layer has missed buildings known to exist. This is "
-        "a floor on the undercount, not a measure of it.\n\n"
+        "finds fewer, the footprint layer has missed buildings known to exist. This establishes "
+        "only a minimum undercount.\n\n"
     )
     add(
         _table(
@@ -195,11 +195,11 @@ def write_summary(
     add("## Montevideo validation\n\n")
     add(
         "The Observatorio de Asentamientos Irregulares publishes dwelling and person "
-        "counts for each active Montevideo settlement. These never feed the national "
+        "counts for each active Montevideo settlement. The national estimate excludes these "
         "estimate: the Observatorio's field sheet lists satellite building counting "
         "among its own sources, so calibrating on them would be partly circular. They "
-        "do show where footprint counting agrees with a register built from field "
-        "work, administrative files, and imagery together.\n\n"
+        "show where footprint counting agrees with a register built from field work "
+        "plus administrative and imagery sources.\n\n"
     )
     add(
         _table(
@@ -266,8 +266,8 @@ def write_summary(
     # ------------------------------------------------------ attribute coverage
     add("## What Overture does not carry here\n\n")
     add(
-        "Two analyses that the Argentine work could run are impossible on this data, "
-        "and the reason is measurable rather than arguable.\n\n"
+        "This data cannot support the vertical-density or building-type analyses from "
+        "the Argentine work. Measured attribute coverage explains why.\n\n"
     )
     add(
         _table(
@@ -283,9 +283,9 @@ def write_summary(
         )
     )
     add(
-        "No building inside a Uruguayan settlement carries a height, so there is no "
+        "Overture reports height for no building inside a Uruguayan settlement, so there is no "
         "vertical-density analysis to run. `subtype` is almost entirely absent too, "
-        "which is why the residential share stays a declared assumption: Overture "
+        "so the residential share stays a declared assumption: Overture "
         "cannot say which of these footprints are dwellings.\n\n"
     )
 

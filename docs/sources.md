@@ -12,8 +12,8 @@ Ordenamiento Territorial.
 
 667 polygons of settlements active at 2024-12-31. Fields: `OBJECTID`, `Codigo_AI`,
 `Nombre_AI`, `Nombre_dep`, `Codigo_dep`, `Nombre_loc`, `Codigo_loc`, `Fecha_desd`,
-`GlobalID`. There is no dwelling, household, or population field, which is the single
-fact that most shapes this analysis.
+`GlobalID`. There is no dwelling, household, or population field. That missing
+information determines the analysis design.
 
 Also catalogued at IDEuy:
 <https://visualizador.ide.uy/geonetwork/srv/api/records/335f5f40-0aaa-4ccc-8997-c836d8ace6e2>
@@ -27,14 +27,16 @@ Taken from this report:
 
 - 667 active settlements at 2024-12-31, across 18 of 19 departamentos and 91 census
   localities. Flores has none.
+<!-- vale off -->
 - The INE-PIAI 2006 definition, quoted verbatim on page 2: "Agrupamiento a partir de 10
   viviendas, ubicados en terrenos públicos o privados, construidos sin autorización del
   propietario en condiciones formalmente irregulares, sin respetar la normativa
   urbanística." This 10-dwelling floor is what makes the detection check possible.
-- The series, corrected by DINISU in 2023-2024: 661 (2006), 638 (2011), 678 (2018), 691
+<!-- vale on -->
+- DINISU corrected the series in 2023-2024 to 661 (2006), 638 (2011), 678 (2018), 691
   (March 2020), 667 (2024).
 - Montevideo 345 and Canelones 128 in 2024, together 70.9% of the national total.
-- The register carries no household or population counts. INE and DINISU began imputing
+- The register omits household and population counts. INE and DINISU began imputing
   census data to settlements in January 2025, and that work was still in progress when
   the report was written.
 
@@ -50,15 +52,15 @@ leaves 345 active settlements holding 37,413 viviendas and 132,874 personas, whi
 implies 3.55 persons per dwelling.
 
 The field sheet (`OAI_Hoja descriptiva_Datos Abiertos_Asentamientos_Junio2025`) says the
-viviendas and personas fields are estimates drawn from several sources: the INE-PIAI 2006
-survey, the PMB-MVOT 2012 reprocessing of Censo 2011, departmental reports and files,
-the Observatorio's own field surveys, and "interpretación propia de imágenes aéreas o
-satelitales (conteo de construcciones)." That last source is why these counts validate
-the footprint estimate but never calibrate it.
+viviendas and personas fields are estimates drawn from the INE-PIAI 2006 survey and the
+PMB-MVOT 2012 reprocessing of Censo 2011. It also cites departmental records, the
+Observatorio's field surveys, and "interpretación propia de imágenes aéreas o satelitales
+(conteo de construcciones)." The imagery source makes these counts suitable for validation
+but not calibration.
 
-One discrepancy worth knowing: the field sheet states the geometry is EPSG:32721, but
-the CSV's WKT holds decimal degrees, so it is EPSG:4326. The pipeline does not read that
-geometry, joining on the settlement code instead.
+The field sheet labels the geometry EPSG:32721, but the CSV's WKT contains decimal degrees
+and uses EPSG:4326. The pipeline avoids that discrepancy by joining on the settlement code
+instead of reading the geometry.
 
 **Relevamiento de asentamientos irregulares. Primeros resultados de población y
 viviendas a partir del censo 2011**

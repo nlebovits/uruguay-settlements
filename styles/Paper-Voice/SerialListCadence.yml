@@ -1,0 +1,9 @@
+# Two inline lists in a paragraph are ordinary prose. Three stacked in a row
+# are the cadence this rule exists to catch, and no human writes them.
+extends: occurrence
+message: "This paragraph stacks three inline lists. Vary the syntax or use a real list."
+level: error
+scope: paragraph
+max: 2
+token: >-
+  ,\s+[^,.;:!?\n]{1,80},\s+and\s+[^.;:!?\n]{1,80}

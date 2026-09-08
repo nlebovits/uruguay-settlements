@@ -15,5 +15,13 @@ __pycache__/
 .serena/
 .code-review-graph/
 
+# Vale packages fetched by `vale sync`.
+styles/Google/
+styles/Microsoft/
+styles/Readability/
+styles/ai-tells/
+# `vale sync` also unpacks the ai-tells agent template here.
+styles/config/templates/
+
 # Per-machine Claude Code state. The skill in .claude/skills/ is tracked.
 .claude/settings.local.json
