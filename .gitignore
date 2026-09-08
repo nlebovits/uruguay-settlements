@@ -14,3 +14,6 @@ __pycache__/
 # Local tooling state
 .serena/
 .code-review-graph/
+
+# Per-machine Claude Code state. The skill in .claude/skills/ is tracked.
+.claude/settings.local.json
