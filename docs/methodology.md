@@ -1,16 +1,16 @@
 # Methodology
 
-## What the pipeline does
+## Pipeline stages
 
-For each of the 667 settlements in the RNAI 2024 register, count the Overture Maps
-building footprints that intersect it, then convert footprints to people:
+For each of the 667 settlements in the RNAI 2024 register, the pipeline counts the
+intersecting Overture Maps building footprints and converts footprints to people:
 
 ```
 estimated_dwellings  = footprints x residential_share
 estimated_population = estimated_dwellings x persons_per_dwelling
 ```
 
-Four phases, each timed:
+The pipeline records the duration of each phase.
 
 1. **Download.** The RNAI polygons through `gpio.extract_arcgis`, which pages the ArcGIS
    service and reprojects to EPSG:4326. The Montevideo Observatorio CSV over HTTP. The
@@ -37,23 +37,23 @@ The only axis where every value has a Uruguayan source.
 | 3.4 | PMB-UEM 2012, Cuadro 5, from Censo 2011 |
 | 3.55 | Implied by the Montevideo Observatorio, April 2026: 132,874 / 37,413 |
 
-The three bracket a plausible range. None is a national measurement for 2026, because
+Together, these values bracket a plausible range. None is a national measurement for 2026, because
 Uruguay has not published one. The last national figure is fifteen years old, and the
 national trend since then has been downward: household size fell from 2.82 in 2011 to 2.5
-in 2023. Whether asentamientos followed that trend is unknown, which is why 3.0 and 3.55
+in 2023. Whether asentamientos followed that trend is unknown, so 3.0 and 3.55
 sit on either side of 3.4 rather than replacing it.
 
 ### Residential share
 
-0.85, 0.90, 0.95, 1.00. **This is a declared assumption, not a citation.** It stands for
+0.85, 0.90, 0.95, 1.00. **This declared assumption lacks a citation.** It stands for
 the fraction of footprints inside a settlement boundary that are dwellings rather than
 sheds, outbuildings, shops, or churches. No Uruguayan source publishes it, and the sweep
 exists so the reader can see how much the answer depends on a number nobody has measured.
 
 ### Footprint size filters
 
-None, 6 m², and 10 m². Carried over from the Argentine analysis as generic noise filters.
-They are not country-specific parameters and nothing here treats them as such.
+None, 6 m², and 10 m². Carried over from the Argentine analysis as generic noise filters,
+they are generic rather than country-specific parameters.
 
 On this data the 6 m² filter is inert. The smallest Overture footprint inside any
 settlement is 6.31 m², so that filter and no filter return the same 82,392 footprints, and
@@ -68,31 +68,30 @@ the per-settlement outputs use it. No size filter, because Overture already unde
 in these settlements and discarding small footprints would compound that. The other two
 are the middle of their sweeps.
 
-## Two checks the data makes possible
+## Checks supported by the data
 
 ### Against the definition
 
 INE-PIAI defines an asentamiento as a grouping of more than 10 dwellings, and DINISU has
-applied that definition unchanged since 2006. Every settlement in the register therefore
-has at least 10 dwellings. Wherever Overture finds fewer than 10 footprints, the footprint
-layer has missed buildings known to exist.
+applied that definition unchanged since 2006. Each settlement in the register has at
+least 10 dwellings, so fewer than 10 Overture footprints reveal missing buildings.
 
 This gives a floor on the undercount that needs no external data. It is a floor, not a
 measure: a settlement with 40 footprints and 90 dwellings passes the check while being
 badly undercounted.
 
-### Against Montevideo
+### Montevideo validation
 
 The Observatorio de Asentamientos publishes dwelling and person counts for each of
 Montevideo's 345 active settlements, slightly over half the national total. Both registers
 code a settlement as departamento + CCZ + serial, inherited from the INE-PIAI 2006 census,
 so `Codigo_AI` and `id asentamiento` join directly.
 
-These counts never feed the national estimate. The Observatorio's field sheet lists
+The national estimate excludes these counts. The Observatorio's field sheet lists
 "interpretación propia de imágenes aéreas o satelitales (conteo de construcciones)" among
 its sources, so calibrating a footprint estimate on them would be partly circular. Reported
 side by side they still show where footprint counting agrees with a register built from
-field work, administrative files, and imagery together, and where it does not.
+field work plus administrative and imagery sources, and where it does not.
 
 ## Limits
 
@@ -106,7 +105,7 @@ asentamientos went from 158,727 to 193,260 in May 2026, after reweighting for a 
 census omission that fell hardest on low-income households. Agreement or disagreement with
 193,260 should be read against that, not as a fixed target.
 
-**Footprints are not dwellings.** One footprint can hold several households, and one
+**Footprints are not dwellings.** One footprint can contain several households, and one
 household can spread across several structures. The residential share knob gestures at this
 and does not solve it.
 
@@ -124,11 +123,11 @@ and neither error is measured here.
 prevents the residential share from being measured instead of assumed. `attribute_coverage`
 in `pipeline.py` computes these figures on every run.
 
-**Overture is a mosaic.** Its coverage in informal settlements comes from a mix of
-contributors and machine extraction, and it varies by place and by date. The definition
-check measures how far that falls short in the aggregate. It cannot correct it.
+**Overture combines multiple sources.** Coverage in informal settlements comes from
+contributors and machine extraction, and varies by place and date. The definition check
+measures aggregate coverage gaps but cannot correct them.
 
-**One data quality issue survives into the output.** A single record carries
+**The output retains one source-data problem.** One record has
 `Nombre_dep = 'Nuevo Comienzo'`, which is a settlement name in a departamento field. It is
 reported as its own row in the departamento table rather than silently reassigned. The
 RNAI service also returns 344 Montevideo polygons where the RNAI report and the Montevideo

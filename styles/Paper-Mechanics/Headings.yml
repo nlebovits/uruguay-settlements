@@ -1,0 +1,49 @@
+extends: capitalization
+message: "'%s' should use sentence case."
+level: error
+scope: heading
+match: $sentence
+# Proper nouns and acronyms that must keep their case. Add a name here when
+# a heading needs it.
+exceptions:
+  - Barrios
+  - Visibles
+  - URLs
+  - URL
+  - README
+  - CLAUDE
+  - SSRN
+  - v1.0
+  - v2.0
+  - GeoParquet
+  - PMTiles
+  - COG
+  - Zarr
+  - STAC
+  - DuckDB
+  - GeoTIFF
+  - GeoServer
+  - Esri
+  - ArcGIS
+  - QGIS
+  - MapLibre
+  - BigQuery
+  - PostGIS
+  - MinIO
+  - CLI
+  - API
+  - APIs
+  - JSON
+  - YAML
+  - HTTP
+  - AWS
+  - GCS
+  - CI
+  - PR
+  - Apache
+  - FAIR
+  - Vale
+  - Google
+  - GitHub
+  - Python
+  - I

@@ -1,0 +1,42 @@
+extends: substitution
+message: "Write '%s', not '%s'."
+# Warning, not error. TokenIgnores loses its offsets when the parser joins
+# wrapped lines, so this reports domain names inside URLs. Casing is
+# cosmetic and CI gates on errors.
+level: warning
+ignorecase: false
+swap:
+  'geoparquet': GeoParquet
+  'Geoparquet': GeoParquet
+  'GeoParq': GeoParquet
+  'stac': STAC
+  'Stac': STAC
+  'pmtiles': PMTiles
+  'Pmtiles': PMTiles
+  'PMtiles': PMTiles
+  'geotiff': GeoTIFF
+  'Geotiff': GeoTIFF
+  'GeoTiff': GeoTIFF
+  'geopackage': GeoPackage
+  'Geopackage': GeoPackage
+  'shapefile': Shapefile
+  'geoserver': GeoServer
+  'Geoserver': GeoServer
+  'arcgis': ArcGIS
+  'Arcgis': ArcGIS
+  'ArcGis': ArcGIS
+  'qgis': QGIS
+  'Qgis': QGIS
+  'duckdb': DuckDB
+  'Duckdb': DuckDB
+  'DuckDb': DuckDB
+  'postgis': PostGIS
+  'Postgis': PostGIS
+  'bigquery': BigQuery
+  'Bigquery': BigQuery
+  'minio': MinIO
+  'Minio': MinIO
+  'maplibre': MapLibre
+  'Maplibre': MapLibre
+  'ESRI': Esri
+  'esri': Esri

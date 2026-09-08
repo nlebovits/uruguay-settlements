@@ -1,0 +1,8 @@
+extends: substitution
+message: "'%s' is a mirrored phrase and reads like advertising. Rewrite one half."
+level: suggestion
+ignorecase: true
+swap:
+  'published by anyone, discoverable by everyone': published once and searchable from one place
+  'found together, used together': found in one place and queried from the source
+  'built by \w+, for \w+': built for people and agents

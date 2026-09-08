@@ -26,11 +26,11 @@ footprints-forward only:
 footprints x residential_share x persons_per_dwelling
 ```
 
-Everything downstream follows from that. Without a per-settlement official count there is
-no vertical-density comparison, no per-settlement source attribution, and no way to detect
-where the official register captured more than the imagery.
+Everything downstream follows from that. The missing per-settlement official count
+removes the vertical-density comparison and per-settlement source attribution. It also
+prevents detection of places where the official register captured more than the imagery.
 
-## Every constant was replaced
+## Country-specific constants
 
 | Argentina | Uruguay | Why |
 |---|---|---|
@@ -61,8 +61,8 @@ against. Overture's own height fields cannot stand in, and the shortfall is not 
 | `num_floors` | 24,224 (0.39%) | 17 (0.02%) |
 | `subtype` | 53,603 (0.86%) | 101 (0.12%) |
 
-Not one building inside a Uruguayan settlement carries a height. The 17 with a floor count
-are too few to say anything. `subtype` fails the same way, which is why the residential
+Overture reports height for zero buildings inside Uruguayan settlements. The 17 with a
+floor count are too few to support analysis. `subtype` has the same problem, so the residential
 share stays a declared assumption rather than a measurement: Overture cannot say which of
 these footprints are dwellings. The pipeline reports these figures rather than asserting
 them, so they update with each Overture release.
@@ -79,12 +79,11 @@ rather than folded into it.
 
 ## Footprints
 
-Argentina used the VIDA Google/Microsoft/OSM Open Buildings mosaic, which ships a national
+Argentina used the VIDA Google/Microsoft/OSM Open Buildings mosaic, which provides a national
 ARG parquet with an `area_in_meters` column. Uruguay uses Overture Maps release
 2026-08-19.0, read straight from the public bucket and cut to a bounding box. Overture has
 no area column, so footprint areas are computed with `ST_Transform` into EPSG:32721, the
 UTM zone covering Uruguay.
 
-The gpio optimization step carried over unchanged in spirit: bbox column, Hilbert ordering,
-GeoParquet 1.1, for the same reason. Neither source file arrives organized for a spatial
-join.
+The gpio optimization step uses the same bbox column, Hilbert ordering, and GeoParquet 1.1
+structure. Those choices organize both source files for a spatial join.

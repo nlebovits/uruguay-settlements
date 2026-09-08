@@ -1,0 +1,28 @@
+# Prose hooks ported from nlebovits/barrios-visibles-paper.
+repos:
+  # Prose rules. The styles live in styles/, and .vale.ini configures them.
+  # `sync` fetches the pinned third-party packages; it takes no filenames.
+  - repo: https://github.com/vale-cli/vale
+    rev: v3.19.0
+    hooks:
+      - id: vale
+        name: vale sync
+        args: [sync]
+        pass_filenames: false
+      - id: vale
+        args: [--output=line, --minAlertLevel=error]
+
+  # General English checks that do not overlap the Vale styles.
+  - repo: https://github.com/amperser/proselint
+    rev: v0.16.0
+    hooks:
+      - id: proselint
+        args: [check, --config, proselint.json]
+        types: [markdown]
+        # paper/ is excluded for the same reason as the vale hook above. Its
+        # one finding, "Very High-Resolution", is part of a published title.
+        exclude: |
+          (?x)^(
+            \.claude/
+            |paper/
+          )

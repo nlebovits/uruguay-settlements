@@ -6,11 +6,11 @@ Generated 2026-09-04 18:38 UTC from Overture Maps release 2026-08-19.0 and the R
 
 Overture finds **82,392 building footprints** inside Uruguay's 667 registered asentamientos irregulares. At 90% residential share and 3.4 persons per dwelling, that implies **252,120 people**, 7.20% of Uruguay's population.
 
-INE's reweighted Censo 2023 puts 193,260 people in asentamientos, 5.5% of the population. The footprint estimate is **1.30x** that figure. Before the May 2026 reweighting, INE's own number was 158,727, so the official count moved by 22% in a single revision.
+INE's reweighted Censo 2023 puts 193,260 people in asentamientos, 5.5% of the population. The footprint estimate is **1.30x** that figure. Before the May 2026 reweighting, INE's own number was 158,727, so the official count moved by 22% in one revision.
 
 ## Sensitivity
 
-Three footprint size filters, four residential shares, three persons-per-dwelling values. Only the last axis carries a Uruguayan citation for every value; see `docs/methodology.md`.
+The sweep covers three footprint size filters, four residential shares, and three persons-per-dwelling values. Only the persons-per-dwelling values have a Uruguayan citation for every value; see `docs/methodology.md`.
 
 | Size filter | Residential share | Persons/dwelling | Footprints | Est. dwellings | Est. population | % of Uruguay | vs INE |
 |---|---|---|---|---|---|---|---|
@@ -57,7 +57,7 @@ The >=6 m2 filter removes nothing: the smallest Overture footprint inside any se
 
 ## Detection check against the definition
 
-INE-PIAI defines an asentamiento as a grouping of more than 10 dwellings, so every settlement in the register has at least that many. Wherever Overture finds fewer, the footprint layer has missed buildings known to exist. This is a floor on the undercount, not a measure of it.
+INE-PIAI defines an asentamiento as a grouping of more than 10 dwellings, so every settlement in the register has at least that many. Wherever Overture finds fewer, the footprint layer has missed buildings known to exist. This establishes only a minimum undercount.
 
 | Metric | Value |
 |---|---|
@@ -82,7 +82,7 @@ Worst detected:
 
 ## Montevideo validation
 
-The Observatorio de Asentamientos Irregulares publishes dwelling and person counts for each active Montevideo settlement. These never feed the national estimate: the Observatorio's field sheet lists satellite building counting among its own sources, so calibrating on them would be partly circular. They do show where footprint counting agrees with a register built from field work, administrative files, and imagery together.
+The Observatorio de Asentamientos Irregulares publishes dwelling and person counts for each active Montevideo settlement. The national estimate excludes these counts: the Observatorio's field sheet lists satellite building counting among its own sources, so calibrating on them would be partly circular. They show where footprint counting agrees with a register built from field work plus administrative and imagery sources.
 
 | Metric | Value |
 |---|---|
@@ -129,7 +129,7 @@ Central scenario: no size filter, 90% residential share, 3.4 persons per dwellin
 
 ## What Overture does not carry here
 
-Two analyses that the Argentine work could run are impossible on this data, and the reason is measurable rather than arguable.
+This data cannot support the vertical-density or building-type analyses from the Argentine work. Measured attribute coverage explains why.
 
 | Attribute | All Uruguay | Inside settlements |
 |---|---|---|
@@ -137,7 +137,7 @@ Two analyses that the Argentine work could run are impossible on this data, and 
 | num_floors | 24,224 (0.39%) | 17 (0.02%) |
 | subtype | 53,603 (0.86%) | 101 (0.12%) |
 
-No building inside a Uruguayan settlement carries a height, so there is no vertical-density analysis to run. `subtype` is almost entirely absent too, which is why the residential share stays a declared assumption: Overture cannot say which of these footprints are dwellings.
+Overture reports height for no building inside a Uruguayan settlement, so there is no vertical-density analysis to run. `subtype` is almost entirely absent too, so the residential share stays a declared assumption: Overture cannot say which of these footprints are dwellings.
 
 ## Parameters
 
